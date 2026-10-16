@@ -14,16 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      courses: {
+        Row: {
+          created_at: string
+          description: string
+          grade: string
+          id: string
+          price: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          grade?: string
+          id?: string
+          price?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          grade?: string
+          id?: string
+          price?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      enrollments: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "enrollments_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lessons: {
+        Row: {
+          body: string
+          course_id: string
+          created_at: string
+          file_path: string | null
+          id: string
+          kind: Database["public"]["Enums"]["lesson_kind"]
+          position: number
+          title: string
+          unit_id: string
+        }
+        Insert: {
+          body?: string
+          course_id: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["lesson_kind"]
+          position?: number
+          title: string
+          unit_id: string
+        }
+        Update: {
+          body?: string
+          course_id?: string
+          created_at?: string
+          file_path?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["lesson_kind"]
+          position?: number
+          title?: string
+          unit_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_unit_id_fkey"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string
+          grade: string
+          id: string
+          last_name: string
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          first_name?: string
+          grade?: string
+          id: string
+          last_name?: string
+          phone?: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          grade?: string
+          id?: string
+          last_name?: string
+          phone?: string
+        }
+        Relationships: []
+      }
+      units: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          position: number
+          title: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          position?: number
+          title: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          position?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "units_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_enrolled: { Args: { _course: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      lesson_kind: "video" | "homework" | "exam"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +341,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      lesson_kind: ["video", "homework", "exam"],
+    },
   },
 } as const
