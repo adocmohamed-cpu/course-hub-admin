@@ -22,15 +22,9 @@ export const Route = createFileRoute("/")({
   component: Platform,
 });
 
-let ran = false;
 function Platform() {
   useEffect(() => {
-    if (!ran) {
-      ran = true;
-      new Function(script)();
-    } else {
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
-    }
+    new Function(script)();
     return installBridge();
   }, []);
   return (
