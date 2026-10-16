@@ -1,24 +1,36 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
+import html from "@/platform/platform.html?raw";
+import { installBridge } from "@/platform/bridge";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+// The original platform page is rendered exactly as uploaded.
+const style = html.match(/<style>([\s\S]*?)<\/style>/)?.[1] ?? "";
+const bodyFull = html.match(/<body[^>]*>([\s\S]*)<\/body>/)?.[1] ?? "";
+const script = bodyFull.match(/<script>([\s\S]*?)<\/script>/)?.[1] ?? "";
+const body = bodyFull.replace(/<script>[\s\S]*?<\/script>/g, "");
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "مستر محمد موسى | منصة اللغة الإنجليزية" },
+      { name: "description", content: "منصة مستر محمد موسى لتعليم اللغة الإنجليزية لطلاب الثانوية العامة." },
+      { property: "og:title", content: "مستر محمد موسى | منصة اللغة الإنجليزية" },
+      { property: "og:description", content: "منصة مستر محمد موسى لتعليم اللغة الإنجليزية لطلاب الثانوية العامة." },
+    ],
+    links: [{ rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" }],
+  }),
+  component: Platform,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Platform() {
+  useEffect(() => {
+    new Function(script)();
+    return installBridge();
+  }, []);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <style dangerouslySetInnerHTML={{ __html: style }} />
+      <div dangerouslySetInnerHTML={{ __html: body }} />
+    </>
   );
 }
