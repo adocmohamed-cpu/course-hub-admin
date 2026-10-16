@@ -20,6 +20,7 @@ export type Database = {
           description: string
           grade: string
           id: string
+          image_url: string | null
           price: number
           title: string
         }
@@ -28,6 +29,7 @@ export type Database = {
           description?: string
           grade?: string
           id?: string
+          image_url?: string | null
           price?: number
           title: string
         }
@@ -36,6 +38,7 @@ export type Database = {
           description?: string
           grade?: string
           id?: string
+          image_url?: string | null
           price?: number
           title?: string
         }
