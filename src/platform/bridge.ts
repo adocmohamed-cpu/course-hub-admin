@@ -32,7 +32,36 @@ async function refreshAdminButton() {
   document.body.appendChild(a);
 }
 
+// Adds the real courses (added from the control panel) under the original courses section.
+async function renderRealCourses() {
+  document.getElementById("mm-real-courses")?.remove();
+  const { data } = await supabase.from("courses").select("*").order("created_at", { ascending: false });
+  if (!data?.length) return;
+  const paths = data.map((c) => c.image_url).filter(Boolean) as string[];
+  const imgs: Record<string, string> = {};
+  if (paths.length) {
+    const { data: s } = await supabase.storage.from("course-images").createSignedUrls(paths, 604800);
+    s?.forEach((x) => x.path && x.signedUrl && (imgs[x.path] = x.signedUrl));
+  }
+  const esc = (t: string) => t.replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]!);
+  const sec = document.createElement("section");
+  sec.id = "mm-real-courses";
+  sec.style.cssText = "padding:24px 0 64px";
+  sec.innerHTML = `<div class="wrap"><span class="lab">كورسات المنصة</span><h2>كل <em>الكورسات</em></h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px">${data
+    .map((c) => {
+      const im = c.image_url && imgs[c.image_url];
+      return `<a href="/course/${c.id}" style="display:flex;flex-direction:column;background:var(--soft);border:1px solid var(--line);border-radius:20px;overflow:hidden">
+      <div style="aspect-ratio:16/10;background:var(--green);display:flex;align-items:center;justify-content:center">${im ? `<img src="${im}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:var(--amber);font-size:2.5rem;font-weight:900">${esc(c.title.slice(0, 1))}</span>`}</div>
+      <div style="padding:16px"><small style="color:var(--mut)">الصف ${esc(c.grade)}</small><b style="display:block;font-size:1.15rem;margin:4px 0">${esc(c.title)}</b>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><strong style="color:var(--amber)">${c.price} جنيه</strong><span class="btn am" style="padding:6px 14px">ادخل الكورس</span></div></div></a>`;
+    })
+    .join("")}</div></div>`;
+  document.getElementById("courses")?.after(sec);
+}
+
 export function installBridge() {
+  renderRealCourses();
   const onSubmit = async (e: Event) => {
     const form = e.target as HTMLElement;
     if (form.id === "auSignup") {
