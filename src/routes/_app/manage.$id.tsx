@@ -118,6 +118,7 @@ function AddItem({ kind, courseId, unitId, position, onDone }: { kind: "video" |
     if (error) return toast.error("ماتحفظش");
     toast.success(`تم إضافة ال${label}`);
     setTitle(""); setBody(""); setFile(null); (e.target as HTMLFormElement).reset(); onDone();
+    return undefined;
   };
 
   return (
