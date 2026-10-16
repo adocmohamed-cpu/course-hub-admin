@@ -32,7 +32,7 @@ function Admin() {
   const [courses, setCourses] = useState<any[]>([]);
   const [enr, setEnr] = useState<any[]>([]);
   const [q, setQ] = useState("");
-  const [form, setForm] = useState({ title: "", description: "", grade: GRADES[0], price: "" });
+  const [form, setForm] = useState({ title: "", description: "", grade: GRADES[0] ?? "", price: "" });
 
   const load = async () => {
     const [u, c, e] = await Promise.all([
@@ -54,6 +54,7 @@ function Admin() {
       .select().single();
     if (error) return toast.error("ماتحفظش الكورس");
     navigate({ to: "/manage/$id", params: { id: data.id } });
+    return undefined;
   };
 
   const grant = async (user_id: string, course_id: string) => {
