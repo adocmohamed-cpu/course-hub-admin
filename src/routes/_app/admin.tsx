@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GRADES } from "@/lib/content";
+import { GRADES, IMG_BUCKET } from "@/lib/content";
 
 export const Route = createFileRoute("/_app/admin")({
   head: () => ({
@@ -33,6 +33,7 @@ function Admin() {
   const [enr, setEnr] = useState<any[]>([]);
   const [q, setQ] = useState("");
   const [form, setForm] = useState({ title: "", description: "", grade: GRADES[0] ?? "", price: "" });
+  const [img, setImg] = useState<File | null>(null);
 
   const load = async () => {
     const [u, c, e] = await Promise.all([
@@ -49,8 +50,14 @@ function Admin() {
   const addCourse = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (!form.title.trim()) return toast.error("اكتب اسم الكورس");
+    let image_url: string | null = null;
+    if (img) {
+      image_url = `${crypto.randomUUID()}.${img.name.split(".").pop()}`;
+      const up = await supabase.storage.from(IMG_BUCKET).upload(image_url, img, { contentType: img.type });
+      if (up.error) return toast.error("رفع الصورة فشل");
+    }
     const { data, error } = await supabase.from("courses")
-      .insert({ title: form.title.trim(), description: form.description, grade: form.grade, price: Number(form.price) || 0 })
+      .insert({ title: form.title.trim(), description: form.description, grade: form.grade, price: Number(form.price) || 0, image_url })
       .select().single();
     if (error) return toast.error("ماتحفظش الكورس");
     navigate({ to: "/manage/$id", params: { id: data.id } });
@@ -118,6 +125,7 @@ function Admin() {
               <select className="rounded-md border bg-card px-2 py-2 text-sm" value={form.grade} onChange={(e) => setForm({ ...form, grade: e.target.value })}>
                 {GRADES.map((g) => <option key={g}>{g}</option>)}
               </select>
+              <label className="text-sm font-bold">صورة الكورس<Input type="file" accept="image/*" onChange={(e) => setImg(e.target.files?.[0] ?? null)} /></label>
               <Textarea placeholder="وصف الكورس" className="sm:col-span-2" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
               <Button type="submit" variant="secondary" className="sm:col-span-2">إضافة وإدخال المحتوى</Button>
             </form>
