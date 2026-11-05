@@ -69,7 +69,7 @@ async function renderRealCourses() {
       <div style="padding:12px 4px 0;flex:1"><b style="display:block;font-size:1.15rem">${esc(c.title)}</b><strong style="display:block;color:var(--amber);margin-top:4px">${c.price} جنيه</strong>
       <small style="color:var(--mut)">الصف ${esc(c.grade)}</small><p class="mm-desc">${esc(c.description || "")}</p></div>
       <a href="/course/${c.id}" class="mm-b" style="background:var(--green);color:#fff">الدخول للكورس</a>
-      <a href="#signup" class="mm-b" style="background:var(--amber);color:#14201a">الاشتراك في الكورس!</a></div>`;
+      <a href="#signup" onclick="event.preventDefault();window.openAuth&&openAuth('signup')" class="mm-b" style="background:var(--amber);color:#14201a">الاشتراك في الكورس!</a></div>`;
     })
     .join("")}</div></div>`;
   sec.querySelectorAll<HTMLButtonElement>(".mm-nav").forEach((b) =>
