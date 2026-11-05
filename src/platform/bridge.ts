@@ -48,7 +48,7 @@ async function renderRealCourses() {
   sec.id = "mm-real-courses";
   sec.style.cssText = "padding:24px 0 64px";
   sec.innerHTML = `<div class="wrap"><span class="lab">كورسات المنصة</span><h2>كل <em>الكورسات</em></h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px">${data
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:22px">${data
     .map((c) => {
       const im = c.image_url && imgs[c.image_url];
       return `<a href="/course/${c.id}" style="display:flex;flex-direction:column;background:var(--soft);border:1px solid var(--line);border-radius:20px;overflow:hidden">
