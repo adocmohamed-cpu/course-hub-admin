@@ -47,16 +47,37 @@ async function renderRealCourses() {
   const sec = document.createElement("section");
   sec.id = "mm-real-courses";
   sec.style.cssText = "padding:24px 0 64px";
-  sec.innerHTML = `<div class="wrap"><span class="lab">كورسات المنصة</span><h2>كل <em>الكورسات</em></h2>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,280px));gap:22px">${data
-    .map((c) => {
+  sec.innerHTML = `<style>
+#mm-real-courses .mm-row{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:10px 4px 20px;scrollbar-width:none}
+#mm-real-courses .mm-row::-webkit-scrollbar{display:none}
+#mm-real-courses .mm-card{flex:0 0 min(360px,85%);scroll-snap-align:start;display:flex;flex-direction:column;background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:14px;transition:transform .4s cubic-bezier(.3,.8,.2,1),box-shadow .4s;opacity:0;transform:translateY(30px);animation:mmIn .7s forwards}
+#mm-real-courses .mm-card:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(0,0,0,.18)}
+#mm-real-courses .mm-img{aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:var(--green);display:flex;align-items:center;justify-content:center}
+#mm-real-courses .mm-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+#mm-real-courses .mm-card:hover .mm-img img{transform:scale(1.07)}
+#mm-real-courses .mm-desc{color:var(--mut);font-size:.9rem;margin:6px 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#mm-real-courses .mm-b{display:block;text-align:center;border-radius:14px;padding:11px;font-weight:800;margin-top:8px}
+#mm-real-courses .mm-nav{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:1.2rem;cursor:pointer}
+@keyframes mmIn{to{opacity:1;transform:none}}
+</style><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:end;gap:12px"><div><span class="lab">كورسات المنصة</span><h2>كل <em>الكورسات</em></h2></div>
+<div style="display:flex;gap:8px;margin-bottom:18px"><button class="mm-nav" data-d="1">→</button><button class="mm-nav" data-d="-1">←</button></div></div>
+  <div class="mm-row">${data
+    .map((c, i) => {
       const im = c.image_url && imgs[c.image_url];
-      return `<a href="/course/${c.id}" style="display:flex;flex-direction:column;background:var(--soft);border:1px solid var(--line);border-radius:20px;overflow:hidden">
-      <div style="aspect-ratio:9/16;background:var(--green);display:flex;align-items:center;justify-content:center">${im ? `<img src="${im}" alt="" style="width:100%;height:100%;object-fit:cover">` : `<span style="color:var(--amber);font-size:2.5rem;font-weight:900">${esc(c.title.slice(0, 1))}</span>`}</div>
-      <div style="padding:16px"><small style="color:var(--mut)">الصف ${esc(c.grade)}</small><b style="display:block;font-size:1.15rem;margin:4px 0">${esc(c.title)}</b>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px"><strong style="color:var(--amber)">${c.price} جنيه</strong><span class="btn am" style="padding:6px 14px">ادخل الكورس</span></div></div></a>`;
+      return `<div class="mm-card" style="animation-delay:${i * 0.12}s">
+      <a href="/course/${c.id}" class="mm-img">${im ? `<img src="${im}" alt="">` : `<span style="color:var(--amber);font-size:3rem;font-weight:900">${esc(c.title.slice(0, 1))}</span>`}</a>
+      <div style="padding:12px 4px 0;flex:1"><b style="display:block;font-size:1.15rem">${esc(c.title)}</b><strong style="display:block;color:var(--amber);margin-top:4px">${c.price} جنيه</strong>
+      <small style="color:var(--mut)">الصف ${esc(c.grade)}</small><p class="mm-desc">${esc(c.description || "")}</p></div>
+      <a href="/course/${c.id}" class="mm-b" style="background:var(--green);color:#fff">الدخول للكورس</a>
+      <a href="#signup" onclick="event.preventDefault();window.openAuth&&openAuth('signup')" class="mm-b" style="background:var(--amber);color:#14201a">الاشتراك في الكورس!</a></div>`;
     })
     .join("")}</div></div>`;
+  sec.querySelectorAll<HTMLButtonElement>(".mm-nav").forEach((b) =>
+    b.addEventListener("click", () => {
+      const r = sec.querySelector(".mm-row")!;
+      r.scrollBy({ left: -Number(b.dataset["d"]) * 380 });
+    }),
+  );
   document.getElementById("courses")?.after(sec);
 }
 
