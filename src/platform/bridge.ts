@@ -75,7 +75,7 @@ async function renderRealCourses() {
   sec.querySelectorAll<HTMLButtonElement>(".mm-nav").forEach((b) =>
     b.addEventListener("click", () => {
       const r = sec.querySelector(".mm-row")!;
-      r.scrollBy({ left: -Number(b.dataset.d) * 380 });
+      r.scrollBy({ left: -Number(b.dataset["d"]) * 380 });
     }),
   );
   document.getElementById("courses")?.after(sec);
