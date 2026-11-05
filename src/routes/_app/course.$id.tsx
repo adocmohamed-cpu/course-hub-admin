@@ -85,8 +85,8 @@ function CoursePage() {
             )}
             {!loading && !user && <Button asChild variant="secondary" className="rounded-full"><a href="/#login">تسجيل الدخول</a></Button>}
           </div>
-          <div className="overflow-hidden rounded-2xl bg-background/10">
-            {img ? <img src={img} alt={course.title} className="h-full max-h-72 w-full object-cover" /> : <div className="flex h-56 items-center justify-center"><BookOpen className="h-16 w-16 text-secondary" /></div>}
+          <div className="mx-auto aspect-[9/16] w-full max-w-xs overflow-hidden rounded-2xl bg-background/10">
+            {img ? <img src={img} alt={course.title} className="h-full w-full object-cover object-center" /> : <div className="flex h-full items-center justify-center"><BookOpen className="h-16 w-16 text-secondary" /></div>}
           </div>
         </section>
 
