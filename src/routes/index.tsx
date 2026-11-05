@@ -30,6 +30,11 @@ function Platform() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: style }} />
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `.cs{height:820px}.it{width:300px;height:533px}@media(max-width:640px){.cs{height:640px}.it{width:200px;height:356px}}`,
+        }}
+      />
       <div dangerouslySetInnerHTML={{ __html: body }} />
     </>
   );
